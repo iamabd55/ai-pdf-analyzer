@@ -99,3 +99,10 @@ out/
 # Jupyter Notebook
 .ipynb_checkpoints
 *.ipynb
+
+backend/chroma_db/
+backend/uploaded_pdfs/
+*.bin
+*.parquet
+*.sqlite
+*.sqlite3
