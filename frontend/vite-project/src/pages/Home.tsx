@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UploadModal from '../components/UploadModal';
-
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 const Home = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +25,7 @@ const Home = () => {
 
   return (
     <>
+    <Header/>
       <section className="px-6 py-16 md:py-14 max-w-300 mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6">
           <span className="relative flex h-2 w-2">
@@ -119,6 +121,7 @@ const Home = () => {
         onClose={() => setIsModalOpen(false)}
         onUpload={handleUpload}
       />
+    <Footer />
     </>
   );
 };

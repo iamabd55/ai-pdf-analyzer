@@ -49,7 +49,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpload }) 
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-md px-4">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/40 backdrop-blur-md px-4">
       <div className="w-full max-w-xl bg-white dark:bg-[#1a1c22] rounded-2xl shadow-2xl p-8 border border-white/20">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold display-font">Upload PDF</h3>
@@ -70,7 +70,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpload }) 
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`w-full aspect-[16/9] border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-4 transition-all cursor-pointer ${
+            className={`w-full aspect-video border-2 border-dashed rounded-xl flex flex-col items-center justify-center gap-4 transition-all cursor-pointer ${
               isDragging 
                 ? 'border-primary bg-primary/10' 
                 : 'border-primary/30 bg-primary/5 hover:border-primary hover:bg-primary/10'
@@ -80,7 +80,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpload }) 
               <span className="material-symbols-outlined text-4xl">cloud_upload</span>
             </div>
             <div className="text-center px-4 w-full">
-              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 break-words overflow-hidden px-2">
+              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 wrap-break-word overflow-hidden px-2">
                 {selectedFile ? (
                   <span className="block overflow-hidden text-ellipsis" style={{ 
                     display: '-webkit-box',
