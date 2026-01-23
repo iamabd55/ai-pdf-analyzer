@@ -212,7 +212,7 @@ const Summarize: React.FC = () => {
     content += `Words: ${pdfData.wordCount.toLocaleString()}\n\n`;
     content += `${'='.repeat(60)}\n\n`;
 
-    summaryData.forEach((section, index) => {
+    summaryData.forEach((section) => {
       content += `${section.icon} ${section.title}\n`;
       content += `${'-'.repeat(60)}\n`;
       content += `${section.content}\n\n`;
