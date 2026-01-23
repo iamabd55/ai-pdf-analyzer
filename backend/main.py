@@ -17,6 +17,10 @@ from vector_store import VectorStore
 
 import tempfile
 import os
+from pathlib import Path
+import shutil
+from typing import Dict
+from dotenv import load_dotenv
 
 load_dotenv()
 app = FastAPI()
