@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import OpenChat from './pages/OpenChat';
+import Summarize from './pages/Summarize';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/chat" element={<OpenChat />} />
+            <Route path="/summarize" element={<Summarize />} />
           </Routes>
         </main>
         

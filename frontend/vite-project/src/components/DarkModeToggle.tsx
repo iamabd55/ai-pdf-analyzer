@@ -5,9 +5,10 @@ export default function DarkModeToggle() {
     return localStorage.getItem('theme') === 'dark';
   });
 
-  // Apply theme immediately to prevent flicker
+  // Apply the theme to the document <html> element
+  // useLayoutEffect runs **before the browser paints** to prevent flicker
   useLayoutEffect(() => {
-    const root = window.document.documentElement;
+    const root = window.document.documentElement; //<html> element
     if (isDark) {
       root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
