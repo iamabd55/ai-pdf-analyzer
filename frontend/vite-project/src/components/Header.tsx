@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DarkModeToggle from './DarkModeToggle';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,7 +12,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-3xl text-primary">description</span>
+          <span className="material-symbols-outlined text-3xl font-extrabold text-primary">description</span>
           <h2 className="text-xl font-extrabold tracking-tight">DeepRead</h2>
         </Link>
 
@@ -25,14 +26,39 @@ const Header = () => {
             <span className="material-symbols-outlined text-sm">open_in_new</span>
           </a>
           <DarkModeToggle />
+
+          {/* Clerk Auth Buttons */}
+          <SignedOut>
+            <SignInButton>
+              <button className="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-all">
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
+
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
         </nav>
 
         {/* Mobile Hamburger */}
-        <div className="md:hidden flex items-center">
+        <div className="md:hidden flex items-center gap-2">
           <DarkModeToggle />
+          {/* Mobile Auth Buttons */}
+          <SignedOut>
+            <SignInButton>
+              <button className="w-full py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-all">
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
+
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="ml-2 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+            className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
           >
             {isMenuOpen ? (
               <XMarkIcon className="h-6 w-6 text-gray-800 dark:text-gray-200" />
@@ -53,6 +79,8 @@ const Header = () => {
             GitHub
             <span className="material-symbols-outlined text-sm">open_in_new</span>
           </a>
+
+          
         </div>
       )}
     </header>

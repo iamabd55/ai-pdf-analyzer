@@ -5,4 +5,10 @@ export interface PDFMetadata {
   language: string;
   lastModified: string;
   documentId: string;
+  wordCount?: number;
+  processingStatus?: {
+    text_extraction: boolean;
+    vector_embedding: boolean;
+    ai_ready: boolean;
+  };
 }

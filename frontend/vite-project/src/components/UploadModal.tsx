@@ -38,7 +38,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpload }) 
 
   const handleSelectFile = () => {
     if (selectedFile) {
-      onUpload(selectedFile);
+      onUpload(selectedFile); //file sent to Home.tsx
       setSelectedFile(null);
     }
   };
@@ -62,7 +62,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isOpen, onClose, onUpload }) 
         </div>
         
         <p className="text-gray-500 dark:text-gray-400 mb-8">
-          Choose a PDF file to begin your analysis. Max size 25MB.
+          Choose a PDF file to begin your analysis.
         </p>
         
         <div className="relative group">
