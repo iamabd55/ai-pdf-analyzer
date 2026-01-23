@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Database, Brain } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import type { PDFMetadata } from '../../types/pdf';
 
 interface MobileDocumentBarProps {
