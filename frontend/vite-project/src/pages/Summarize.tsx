@@ -18,7 +18,7 @@ interface ProcessingStatus {
   error: string | null;
 }
 
-const API_URL = 'http://localhost:8000';
+const API_URL = 'https://ai-pdf-analyzer-production.up.railway.app';
 
 const Summarize: React.FC = () => {
   const location = useLocation();
