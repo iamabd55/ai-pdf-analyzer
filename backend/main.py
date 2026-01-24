@@ -36,9 +36,12 @@ supabase: Client = create_client(
 # ------------------------
 # CORS
 # ------------------------
+origins = [
+    "https://ai-pdf-analyzer-theta.vercel.app",  # Vercel frontend
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # change to your frontend URL in production
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
