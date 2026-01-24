@@ -23,7 +23,7 @@ const Home = () => {
   // ✅ OPTIMIZED: Upload to Supabase + Backend in parallel
 // ✅ OPTIMIZED: Upload to Supabase + Navigate Immediately
 const handleUpload = async (file: File) => {
-  const API_URL = 'http://localhost:8000';
+  const API_URL = 'https://ai-pdf-analyzer-production.up.railway.app';
   if (!user) {
     alert("Please sign in to upload PDFs");
     return;
