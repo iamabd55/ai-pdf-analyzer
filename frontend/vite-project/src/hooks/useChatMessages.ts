@@ -91,7 +91,7 @@ export const useChatMessages = ({ documentId }: UseChatMessagesProps) => {
             setMessages(prev => [...prev, newUserMessage]);
 
             // 2️⃣ Call AI backend
-            const response = await fetch('http://localhost:8000/ask-question', {
+            const response = await fetch('https://ai-pdf-analyzer-production.up.railway.app/ask-question', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
