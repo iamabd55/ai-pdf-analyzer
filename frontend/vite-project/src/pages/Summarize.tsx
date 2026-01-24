@@ -289,7 +289,7 @@ const Summarize: React.FC = () => {
       doc.setTextColor(0, 0, 0);
 
       // Summary sections
-      summaryData.forEach((section, index) => {
+      summaryData.forEach((section) => {
         // Section title
         checkPageBreak(15);
         doc.setFontSize(14);
