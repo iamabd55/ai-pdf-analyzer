@@ -2,7 +2,7 @@ import os
 import json
 import re
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 from dotenv import load_dotenv
 from vector_store import VectorStore
 
