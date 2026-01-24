@@ -16,6 +16,7 @@ jsonpatch==1.33
 jsonpointer==3.0.0
 langchain==1.2.6
 langchain-core==1.2.7
+langchain-community==0.4.1
 langdetect==1.0.9
 langgraph==1.0.6
 langgraph-checkpoint==4.0.0
@@ -46,6 +47,7 @@ uuid_utils==0.13.0
 uvicorn==0.40.0
 xxhash==3.6.0
 zstandard==0.25.0
+
 
 
 
