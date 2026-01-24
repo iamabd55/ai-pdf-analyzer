@@ -36,7 +36,7 @@ langchain-core==0.3.83
 langchain-google-genai==2.0.5
 langchain-text-splitters==0.3.7
 langdetect==1.0.9
-langsmith==0.6.4
+langsmith==0.1.147
 numpy==2.4.1
 orjson==3.11.5
 packaging==25.0
@@ -77,3 +77,4 @@ uvicorn==0.32.1
 watchfiles==1.1.1
 websockets==15.0.1
 zstandard==0.25.0
+
