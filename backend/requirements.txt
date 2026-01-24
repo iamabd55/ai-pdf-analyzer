@@ -59,7 +59,6 @@ jsonschema-specifications==2025.9.1
 kubernetes==35.0.0
 langchain==0.3.27
 langchain-community==0.4.1
-langchain-core==0.3.83
 langchain-google-genai==2.1.10
 langchain-text-splitters==0.3.11
 langdetect==1.0.9
@@ -158,5 +157,6 @@ xxhash==3.6.0
 yarl==1.22.0
 zipp==3.23.0
 zstandard==0.25.0
+
 
 
