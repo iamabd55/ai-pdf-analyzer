@@ -12,7 +12,6 @@ cachetools==6.2.4
 certifi==2026.1.4
 cffi==2.0.0
 charset-normalizer==3.4.4
-chromadb==1.4.1
 click==8.3.1
 colorama==0.4.6
 coloredlogs==15.0.1
@@ -58,7 +57,6 @@ jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
 kubernetes==35.0.0
 langchain==0.3.27
-langchain-chroma==1.1.0
 langchain-classic==1.0.1
 langchain-community==0.3.31
 langchain-core==0.3.83
@@ -160,3 +158,4 @@ xxhash==3.6.0
 yarl==1.22.0
 zipp==3.23.0
 zstandard==0.25.0
+
