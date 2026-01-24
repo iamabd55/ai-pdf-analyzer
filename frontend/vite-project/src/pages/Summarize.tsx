@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useUser, SignOutButton } from '@clerk/clerk-react';
+import { useUser, useClerk } from '@clerk/clerk-react';
+import { FileText, Upload, LogOut, Download, ArrowLeft } from 'lucide-react';
 import supabase from '../utils/supabase';
 
 interface SummarySection {
@@ -24,6 +25,7 @@ const Summarize: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useUser();
+  const clerk = useClerk();
   
   const initialFile = location.state?.file as any;
 
@@ -59,6 +61,11 @@ const Summarize: React.FC = () => {
   const [summaryData, setSummaryData] = useState<SummarySection[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [processingProgress, setProcessingProgress] = useState(0);
+
+  const handleSignOut = async () => {
+    await clerk.signOut();
+    navigate('/');
+  };
 
   // Realtime listener
   useEffect(() => {
@@ -202,8 +209,116 @@ const Summarize: React.FC = () => {
     }
   }, [isPdfProcessing]);
 
-  // Download summary as text file
-  const downloadSummary = () => {
+  // Download summary as PDF file
+  const downloadSummary = async () => {
+    try {
+      // Dynamically import jsPDF
+      const { jsPDF } = await import('jspdf');
+      
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const maxWidth = pageWidth - (margin * 2);
+      let yPosition = margin;
+
+      // Helper function to add new page if needed
+      const checkPageBreak = (neededHeight: number) => {
+        if (yPosition + neededHeight > pageHeight - margin) {
+          doc.addPage();
+          yPosition = margin;
+        }
+      };
+
+      // Helper function to wrap text
+      const addWrappedText = (text: string, fontSize: number, fontStyle: string = 'normal', lineHeight: number = 7) => {
+        doc.setFontSize(fontSize);
+        doc.setFont('helvetica', fontStyle);
+        
+        const lines = doc.splitTextToSize(text, maxWidth);
+        
+        lines.forEach((line: string) => {
+          checkPageBreak(lineHeight);
+          doc.text(line, margin, yPosition);
+          yPosition += lineHeight;
+        });
+      };
+
+      // Title
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text('DOCUMENT SUMMARY', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 15;
+
+      // Divider line
+      doc.setDrawColor(200, 200, 200);
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 10;
+
+      // Document metadata
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 100, 100);
+      
+      const metadata = [
+        `Document: ${pdfData.fileName}`,
+        `Generated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+        `Pages: ${pdfData.totalPages}`,
+        `Words: ${pdfData.wordCount.toLocaleString()}`,
+        `Language: ${pdfData.language}`
+      ];
+
+      metadata.forEach(line => {
+        checkPageBreak(6);
+        doc.text(line, margin, yPosition);
+        yPosition += 6;
+      });
+
+      yPosition += 10;
+
+      // Divider line
+      doc.line(margin, yPosition, pageWidth - margin, yPosition);
+      yPosition += 10;
+
+      // Reset text color for content
+      doc.setTextColor(0, 0, 0);
+
+      // Summary sections
+      summaryData.forEach((section, index) => {
+        // Section title
+        checkPageBreak(15);
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`${section.icon} ${section.title}`, margin, yPosition);
+        yPosition += 10;
+
+        // Section content
+        const paragraphs = section.content.split('\n').filter(p => p.trim());
+        
+        paragraphs.forEach(paragraph => {
+          addWrappedText(paragraph.trim(), 10, 'normal', 6);
+          yPosition += 3; // Space between paragraphs
+        });
+
+        yPosition += 5; // Space between sections
+      });
+
+      // Save the PDF
+      doc.save(`${pdfData.fileName.replace('.pdf', '')}_summary.pdf`);
+    } catch (error) {
+      console.error('Failed to generate PDF:', error);
+      // Fallback to text file if PDF generation fails
+      downloadSummaryAsText();
+    }
+  };
+
+  // Fallback text download
+  const downloadSummaryAsText = () => {
     let content = `DOCUMENT SUMMARY\n`;
     content += `${'='.repeat(60)}\n\n`;
     content += `Document: ${pdfData.fileName}\n`;
@@ -230,89 +345,73 @@ const Summarize: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f8f9fc] to-[#e8eaf0]">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
-          {/* Mobile Layout */}
-          <div className="flex items-center justify-between md:hidden">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8f9fc] to-[#e8eaf0] flex flex-col">
+      {/* Unified Header */}
+      <header className="h-14 md:h-16 shrink-0 z-50 w-full border-b border-[#e5e7eb] bg-white px-4 md:px-6 py-2 md:py-3">
+        <div className="flex items-center justify-between h-full">
+          {/* Left */}
+          <div className="flex items-center gap-2">
             <button 
               onClick={() => navigate('/')}
-              className="text-gray-600 hover:text-gray-900"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors mr-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
             </button>
-            
-            <h1 className="text-base font-semibold text-gray-900">Summary</h1>
-            
-            <div className="flex items-center gap-2">
-              {!isPdfProcessing && !isGeneratingSummary && summaryData.length > 0 && (
-                <button
-                  onClick={downloadSummary}
-                  className="text-green-600 hover:text-green-700"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </button>
-              )}
-              <SignOutButton>
-                <button className="text-red-600 hover:text-red-800">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
-                  </svg>
-                </button>
-              </SignOutButton>
+
+            <div className="text-bg-primary flex items-center justify-center">
+              <span className="material-symbols-outlined text-3xl text-primary">description</span>
+            </div>
+
+            <h2 className="text-lg md:text-xl font-extrabold tracking-tight text-[#101318]">
+              DeepRead
+            </h2>
+
+            <div className="hidden md:flex ml-6 px-3 py-1 bg-gray-100 rounded-lg items-center gap-2 text-sm font-medium text-gray-600">
+              <FileText className="w-4 h-4" />
+              {pdfData.fileName}
             </div>
           </div>
-
-          {/* Desktop Layout */}
-          <div className="hidden md:flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => navigate('/')}
-                className="text-gray-600 hover:text-gray-900 transition-colors"
+          
+          {/* Right */}
+          <div className="flex items-center gap-2 md:gap-4">
+            {/* Download Summary */}
+            {!isPdfProcessing && !isGeneratingSummary && summaryData.length > 0 && (
+              <button
+                onClick={downloadSummary}
+                className="p-2 md:flex md:items-center md:gap-2 md:px-4 md:py-2 text-sm font-semibold text-green-600 hover:bg-green-50 rounded-lg transition-colors md:border md:border-green-200"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
+                <Download className="w-5 h-5 md:w-4.5 md:h-4.5" />
+                <span className="hidden md:inline">Download</span>
               </button>
-              <h1 className="text-xl font-semibold text-gray-900">Document Summary</h1>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              {!isPdfProcessing && !isGeneratingSummary && summaryData.length > 0 && (
-                <button
-                  onClick={downloadSummary}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Download
-                </button>
-              )}
-              <SignOutButton>
-                <button className="flex items-center gap-2 text-sm text-red-600 hover:text-red-800 transition-colors">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
-                  </svg>
-                  Sign Out
-                </button>
-              </SignOutButton>
-            </div>
+            )}
+
+            {/* Upload new PDF */}
+            <button
+              onClick={() => navigate('/')}
+              className="p-2 md:flex md:items-center md:gap-2 md:px-4 md:py-2 text-sm font-semibold text-primary hover:bg-primary/10 rounded-lg transition-colors md:border md:border-primary/30"
+            >
+              <Upload className="w-5 h-5 md:w-4.5 md:h-4.5" />
+              <span className="hidden md:inline">Upload PDF</span>
+            </button>
+
+            {/* Sign Out */}
+            <button
+              onClick={handleSignOut}
+              className="p-2 md:flex md:items-center md:gap-2 md:px-4 md:py-2 text-sm font-semibold text-red-500 hover:bg-red-50 rounded-lg transition-colors md:border md:border-red-200"
+            >
+              <LogOut className="w-5 h-5 md:w-4.5 md:h-4.5" />
+              <span className="hidden md:inline">Sign Out</span>
+            </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 w-full">
         
         {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
             <div className="flex items-start">
               <span className="text-2xl mr-3">⚠️</span>
               <div>
@@ -320,7 +419,7 @@ const Summarize: React.FC = () => {
                 <p className="text-sm text-red-700">{error}</p>
                 <button
                   onClick={() => navigate('/')}
-                  className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                  className="mt-2 text-sm text-red-600 hover:text-red-800 underline font-medium"
                 >
                   ← Return to Home
                 </button>
@@ -331,9 +430,9 @@ const Summarize: React.FC = () => {
 
         {/* Processing Loader */}
         {isPdfProcessing && !error && (
-          <div className="text-center py-12">
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             <div className="inline-flex items-center justify-center mb-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-blue-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-primary"></div>
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Processing Document
@@ -347,7 +446,7 @@ const Summarize: React.FC = () => {
             <div className="max-w-md mx-auto">
               <div className="bg-gray-200 rounded-full h-2 overflow-hidden">
                 <div 
-                  className="bg-blue-600 h-full transition-all duration-300"
+                  className="bg-primary h-full transition-all duration-300"
                   style={{ width: `${processingProgress}%` }}
                 />
               </div>
@@ -358,9 +457,9 @@ const Summarize: React.FC = () => {
 
         {/* Summary Generation Loader */}
         {!isPdfProcessing && isGeneratingSummary && !error && (
-          <div className="text-center py-12">
+          <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200 p-8">
             <div className="inline-flex items-center justify-center mb-4">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-blue-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-primary"></div>
             </div>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Generating Summary
@@ -371,7 +470,7 @@ const Summarize: React.FC = () => {
           </div>
         )}
 
-        {/* Summary Content - Clean Text Layout */}
+        {/* Summary Content */}
         {!isPdfProcessing && !isGeneratingSummary && summaryData.length > 0 && !error && (
           <article className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sm:p-8 lg:p-12">
             {/* Document Header */}
