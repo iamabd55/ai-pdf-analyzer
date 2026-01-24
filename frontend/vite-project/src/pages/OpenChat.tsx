@@ -140,7 +140,7 @@ useEffect(() => {
       formData.append('file', newFile);
       formData.append('file_id', fileRecord.id);
 
-      fetch('http://localhost:8000/upload-pdf', {
+      fetch('https://ai-pdf-analyzer-production.up.railway.app/upload-pdf', {
         method: 'POST',
         body: formData
       }).catch(err => console.error('Backend upload error:', err));
