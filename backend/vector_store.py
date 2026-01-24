@@ -1,7 +1,7 @@
 import os
 from typing import List, Dict
 from supabase import create_client
-from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from dotenv import load_dotenv
 
 load_dotenv()
