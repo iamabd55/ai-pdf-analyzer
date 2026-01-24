@@ -1,4 +1,4 @@
-﻿annotated-doc==0.0.4
+annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
 certifi==2026.1.4
@@ -14,16 +14,23 @@ idna==3.11
 jiter==0.12.0
 jsonpatch==1.33
 jsonpointer==3.0.0
-langchain==0.3.27
-langchain-core==0.3.83
+
+# ✅ MODERN LANGCHAIN STACK
+langchain==1.2.6
+langchain-core==1.2.7
 langchain-community==0.4.1
-langchain-google-genai==2.1.10
+
+# ❌ REMOVED: langchain-google-genai (old + incompatible)
+# ✅ Gemini SDK used underneath by LangChain
+google-generativeai==0.8.5
+
 langdetect==1.0.9
 langgraph==1.0.6
 langgraph-checkpoint==4.0.0
 langgraph-prebuilt==1.0.6
 langgraph-sdk==0.3.3
 langsmith==0.6.4
+
 orjson==3.11.5
 ormsgpack==1.12.2
 packaging==25.0
@@ -48,10 +55,3 @@ uuid_utils==0.13.0
 uvicorn==0.40.0
 xxhash==3.6.0
 zstandard==0.25.0
-
-
-
-
-
-
-
